@@ -24,5 +24,25 @@ exports.register = async (req, res) => {
     }
 }
 
+exports.getAllUsers = async (req, res) => {
+
+    const client = new MongoClient(url);
+    await client.connect();
+
+    try {
+
+        const db = client.db(dbName);
+        const users = db.collection('users');
+        const result = await users.find({}).toArray();
+        res.status(200).json(result);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs.' });
+    }
+    finally {
+        await client.close();
+    }
+}
 
 module.exports = exports;
